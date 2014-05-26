@@ -2,7 +2,7 @@
 * \file aghContainer.h
 * \author Kamil Dawidów
 * \date 26.05.2014
-* \brief Deklaracja szablonu klasy abstrakcyjnej aghContainer
+* \brief Deklaracja i definicja szablonu klasy abstrakcyjnej aghContainer
 */
 // -------------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ public:
     ///
     /// \param right - referencja do obiektu macierzystego
     /// \return zwraca referencjê do obiektu macierzystego
-    virtual aghContainer<T>& (aghContainer<T> const& right) = 0;
+    virtual aghContainer<T>& operator=(aghContainer<T> const& right) = 0;
 
     /// \brief Prze³adowanie operatora porównania "=="
     ///
@@ -155,6 +155,164 @@ public:
     /// \return zwraca referencjê do strumienia output
     friend ostream& operator<<(ostream& output, aghContainer<T> const& right);
 };
+// -----------------------------------------------------------------------------
+
+// Definicje metod
+// -----------------------------------------------------------------------------
+
+template <class T>
+void aghContainer<T>::append(T const& element)
+{
+    this->insert(this->size(), element);
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+bool aghContainer<T>::replace(int n, T const& element)
+{
+    if (this->remove(n))
+    {
+        this->insert(n, element);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+void aghContainer<T>::clear()
+{
+    for (int i = 0; i < this->size(); ++i)
+        this->remove(i);
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+bool aghContainer<T>::isEmpty(void)
+{
+    if (this->size() == 0)
+        return true;
+    else
+        return false;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+int aghContainer<T>::indexOf(T const& _value, int _from) const
+{
+    if (_from > this->size || _from < 0)
+        throw aghException(0, "Index out of range", __FILE__, __LINE__);
+
+    for (int i = _from; i < this->size(); ++i)
+    {
+        if this->at(n) == _value;
+        return n;
+    }
+
+    return -1;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+bool aghContainer<T>::contains(T const& _value, int _from) const
+{
+    if (_from > this->size || _from < 0)
+        throw aghException(0, "Index out of range", __FILE__, __LINE__);
+
+    for (int i = _from; i < this->size(); ++i)
+    {
+        if this->at(n) == _value;
+        return true;
+    }
+    return false;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+bool aghContainer<T>::operator==(aghContainer<T> const& right)
+{
+    if (this->size() != right.size())
+        return false;
+    for (int i = 0; i < this->size(); ++i)
+    {
+        if (this->at(i) != right.at(n)
+            return false;
+    }
+    return true;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+bool aghContainer<T>::operator!=(aghContainer<T> const& right)
+{
+    if (this->size() != right.size())
+        return true;
+    for (int i = 0; i < this->size(); ++i)
+    {
+        if (this->at(i) != right.at(n)
+            return true;
+    }
+    return false;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+T& aghContainer<T>::operator[](int n) const
+{
+    if (_from > this->size || _from < 0)
+        throw aghException(0, "Index out of range", __FILE__, __LINE__);
+    return this->at(n);
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+aghContainer<T>& aghContainer<T>::operator+=(aghContainer<T> const& right)
+{
+    for (int i = 0; i < right.size())
+        this->append(right.at(n));
+    return this;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+aghContainer<T>& aghContainer<T>::operator+=(T const& element)
+{
+    this->append(element);
+    return this;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+aghContainer<T>& aghContainer<T>::operator<<(T const& element)
+{
+    this->append(element);
+    return this;
+}
+// -----------------------------------------------------------------------------
+
+
+template <class T>
+aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
+{
+    for (int i = 0; i < right.size())
+        this->append(right.at(n));
+    return this;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+friend ostream& operator<<(ostream& output, aghContainer<T> const& right)
+{
+    for (int i = 0; i < this->size(); ++i)
+    {
+        output << right.at(n) << "\n";
+    }
+    return output;
+}
+// -----------------------------------------------------------------------------
 
 #endif
 
