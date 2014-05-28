@@ -1,6 +1,6 @@
 /**
 * \file aghVector.h
-* \author Kamil Dawidów
+* \author Beata Gie³baga & Kamil Dawidów
 * \date 26.05.2014
 * \brief Deklaracja i definicja szablonu klasy aghVector, pochodnej klasy aghContainer
 */
@@ -15,7 +15,7 @@
 
 /**
 * \class aghVector
-* \author Kamil Dawidów
+* \author Beata Gie³baga & Kamil Dawidów
 * \date 26.05.2014
 * \brief szablon klasy aghVector (pochodnej klasy aghContainer), opisuj¹cej obiekt - wektor, 
 */
@@ -59,15 +59,6 @@ public:
     /// \brief Destruktor
     ~aghVector();
 
-    /// \brief Metoda wstawia element w podane miejsce
-    /// 
-    /// \param n - miejsce, w które zostanie wstawiony element
-    /// \param element - referencja do elementu, który zostanie wstawiony
-    /// \return metoda zwraca:
-    /// \li true - gdy uda siê wstawiæ element
-    /// \li false - gdy nie uda siê wstawiæ elementu
-    bool insert(int n, T const& element);
-
     /// \brief Metoda  zwraca wartoœæ elementu
     ///
     /// \param n - indeks zwracanego elementu
@@ -77,6 +68,15 @@ public:
     ///
     /// \return zwraca iloœæ elementów elementów
     int size(void) const;
+
+    /// \brief Metoda wstawia element w podane miejsce
+    /// 
+    /// \param n - miejsce, w które zostanie wstawiony element
+    /// \param element - referencja do elementu, który zostanie wstawiony
+    /// \return metoda zwraca:
+    /// \li true - gdy uda siê wstawiæ element
+    /// \li false - gdy nie uda siê wstawiæ elementu
+    bool insert(int n, T const& element);
 
     /// \brief Metoda usuwa wybrany element
     ///
@@ -95,6 +95,40 @@ public:
 // --------------------------------------------------------------
 
 // Definicje metod
+
+// --------------------------------------------------------------
+
+template <class T>
+void aghVector<T>::alloc(int _length)
+{
+    tab = new T[_length];
+    length = _length;
+}
+// --------------------------------------------------------------
+
+template <class T>
+void aghVector<T>::dealloc()
+{
+    delete[] tab;
+    tab = nullptr;
+    length = 0;
+}
+// --------------------------------------------------------------
+
+template <class T>
+void aghVector<T>::resize(int k)
+{
+    T* localtab = tab;
+    this->alloc(length + k);
+
+    int helper = length;
+    if (k == 1)
+        --helper;
+
+    for (int i = 0; i < helper; ++i)
+        tab[i] = localtab[i];
+    delete[] localtab;
+}
 // --------------------------------------------------------------
 
 template <class T>
@@ -131,38 +165,6 @@ aghVector<T>::~aghVector()
 // --------------------------------------------------------------
 
 template <class T>
-void aghVector<T>::alloc(int _length)
-{
-    tab = new T[_length];
-    length = _length;
-}
-// --------------------------------------------------------------
-
-template <class T>
-void aghVector<T>::dealloc()
-{
-    delete [] tab;
-    tab = nullptr;
-    length = 0;
-}
-
-template <class T>
-void aghVector<T>::resize(int k)
-{
-    T* localtab = tab;
-    this->alloc(length + k);
-
-    int helper = length;
-    if (k == 1)
-        -- helper;
-
-    for (int i = 0; i < helper; ++i)
-        tab[i] = localtab[i];
-    delete[] localtab;
-}
-// --------------------------------------------------------------
-
-template <class T>
 T& aghVector<T>::at(int n) const
 {
     if (n > this->size() || n < 0)
@@ -172,19 +174,24 @@ T& aghVector<T>::at(int n) const
 // --------------------------------------------------------------
 
 template <class T>
+int aghVector<T>::size(void) const
+{
+    return length;
+}
+// ---------------------------------------------------------------
+
+template <class T>
 bool aghVector<T>::insert(int n, T const& element)
 {
     if (n > length || n < 0)
         return false;
     this->resize(1);
-    if (n == length - 1)
-        tab[n] = element;
-    else
+    if (n != length - 1)
     {
         for (int i = length - 1; i > n; --i)
             tab[i] = tab[i - 1];
-        tab[n] = element;
     }
+    tab[n] = element;
     return true;
 }
 // --------------------------------------------------------------
@@ -202,13 +209,6 @@ bool aghVector<T>::remove(int n)
 // --------------------------------------------------------------
 
 template <class T>
-int aghVector<T>::size(void) const
-{
-    return length;
-}
-// ---------------------------------------------------------------
-
-template <class T>
 aghVector<T>& aghVector<T>::operator=(aghVector<T> const& right)
 {
     if (*this == right)
@@ -219,5 +219,6 @@ aghVector<T>& aghVector<T>::operator=(aghVector<T> const& right)
         tab[i] = right.at(i);
     return *this;
 }
+// --------------------------------------------------------------
 
 #endif

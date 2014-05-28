@@ -1,6 +1,6 @@
 /**
 * \file aghContainer.h
-* \author Kamil Dawidów
+* \author Beata Gie³baga & Kamil Dawidów
 * \date 26.05.2014
 * \brief Deklaracja i definicja szablonu klasy abstrakcyjnej aghContainer
 */
@@ -12,7 +12,7 @@
 
 /**
 * \class aghContainer
-* \author Kamil Dawidów
+* \author Beata Gie³baga & Kamil Dawidów
 * \date 26.05.2014
 * \brief Szablon klasy abstrakcyjnej aghContainer - pojemnika
 */
@@ -160,6 +160,7 @@ public:
 
 // Definicje metod
 // -----------------------------------------------------------------------------
+
 template <class T>
 aghContainer<T>::aghContainer(void)
 {
