@@ -25,23 +25,15 @@ class aghVector: public aghContainer<T>
 {
 private:
     T* tab; ///< wskaŸnik do pocz¹tku tablicy elementów
-    int size; ///< iloœæ elementów w pojemniku
+    int length; ///< iloœæ elementów w pojemniku
 
     /// \brief Metoda alokuje tablicy o wyznaczonej iloœci elementów
     ///
-    /// \param _size - nowa iloœæ elementów
-    void alloc(int _size);
+    /// \param _length - nowa iloœæ elementów
+    void alloc(int _length);
 
     /// \brief Metoda zwalnia zaalokowan¹ pamiêæ
     void dealloc();
-
-    /// \brief Metoda przesuwa elementy o jeden w odpowiedni¹ stronê od podanego indeksu
-    ///
-    /// \param n - od elementu o tym indeksie w³¹cznie elementy zostan¹ przesuniête
-    /// \param dir - kierunek przesuniêcia:
-    /// \li 1 - w prawo
-    /// \li -1 - w lewo
-    void move(int n, int dir);
 
     /// \brief Metoda zmienia rozmiar tablicy
     ///
@@ -49,6 +41,7 @@ private:
     /// \li -1 - zmniejsza o jeden
     /// \li 1 - zwiêksza o jeden
     void resize(int k);
+
 public:
     /// \brief Konstruktor bezparametrowy
     aghVector();
@@ -56,12 +49,17 @@ public:
     /// \brief Konstruktor kopiuj¹cy
     ///
     /// \param pattern - referencja do obiektu macierzystego
-    aghVector(aghVector<T>& pattern);
+    aghVector(const aghVector<T>& pattern);
+
+    /// \brief Konstruktor kopiuj¹cy przyjmuj¹cy jako argument referencjê do obiektu klasy aghContainer
+    ///
+    /// \param pattern - referencja do obiektu macierzystego
+    aghVector(const aghContainer<T>& pattern);
 
     /// \brief Destruktor
     ~aghVector();
 
-    /// \brief Metoda  wstawia element w podane miejsce
+    /// \brief Metoda wstawia element w podane miejsce
     /// 
     /// \param n - miejsce, w które zostanie wstawiony element
     /// \param element - referencja do elementu, który zostanie wstawiony
@@ -88,7 +86,7 @@ public:
     /// \li false - gdy nie uda siê usun¹æ elementu
     bool remove(int n);
 
-    /// \brief {rze³adowanie operatora przypisania "="
+    /// \brief Prze³adowanie operatora przypisania "="
     ///
     /// \param right - referencja do obiektu macierzystego
     /// \return zwraca referencjê do obiektu macierzystego
@@ -102,17 +100,26 @@ public:
 template <class T>
 aghVector<T>::aghVector()
 {
-    size = 0;
+    length = 0;
     tab = nullptr;
 }
 // --------------------------------------------------------------
 
 template <class T>
-aghVector::aghVector(const aghVector<T>& pattern)
+aghVector<T>::aghVector(const aghVector<T>& pattern)
 {
-    this->alloc(pattern.size);
-    for (int i = 0; i < size; ++i)
-        this->replace;
+    this->alloc(pattern.size());
+    for (int i = 0; i < length; ++i)
+        tab[i] = pattern.at(i);
+}
+// --------------------------------------------------------------
+
+template <class T>
+aghVector<T>::aghVector(const aghContainer<T>& pattern)
+{
+    this->alloc(((const aghVector<T>&)pattern).size());
+    for (int i = 0; i < length; ++i)
+        tab[i] = ((const aghVector<T>&)pattern).at(i);
 }
 // --------------------------------------------------------------
 
@@ -124,10 +131,10 @@ aghVector<T>::~aghVector()
 // --------------------------------------------------------------
 
 template <class T>
-void aghVector<T>::alloc(int _size)
+void aghVector<T>::alloc(int _length)
 {
-    tab = new T [_size];
-    size = _size;
+    tab = new T[_length];
+    length = _length;
 }
 // --------------------------------------------------------------
 
@@ -136,61 +143,81 @@ void aghVector<T>::dealloc()
 {
     delete [] tab;
     tab = nullptr;
-    size = 0;
+    length = 0;
 }
-
-template <class T>
-void aghVector<T>::move(int n, int dir)
-{
-    int localtabsize = size - n;
-    T* localtab = new T[localtabsize];
-
-    for (int i = 0; i < localtabsize; ++i)
-        localtab[i] = tab[i + n];
-
-    this->resize(dir);
-
-    for (int i = 0; i < localtabsize; ++i)
-        tab[i + n]
-}
-// --------------------------------------------------------------
 
 template <class T>
 void aghVector<T>::resize(int k)
 {
-    T* localtab = new T[size + k];
-    for (int i = 0; i < size + k; ++i)
-    {
-        localtab[i] = tab[i];
-    }
-    this->dealloc();
-    this->alloc(size + k);
+    T* localtab = tab;
+    this->alloc(length + k);
 
-    for (int i = 0; i < size; ++i)
-    {
+    int helper = length;
+    if (k == 1)
+        -- helper;
+
+    for (int i = 0; i < helper; ++i)
         tab[i] = localtab[i];
-    }
     delete[] localtab;
+}
+// --------------------------------------------------------------
+
+template <class T>
+T& aghVector<T>::at(int n) const
+{
+    if (n > this->size() || n < 0)
+        throw aghException(0, "Index out of range", __FILE__, __LINE__);
+    return tab[n];
 }
 // --------------------------------------------------------------
 
 template <class T>
 bool aghVector<T>::insert(int n, T const& element)
 {
-    if (n > size || n < 0)
+    if (n > length || n < 0)
         return false;
-    if (n == size)
-    {
-        this->resize(1);
-        tab[size] = element;
-        ++size;
-        return true;
-    }
+    this->resize(1);
+    if (n == length - 1)
+        tab[n] = element;
     else
     {
-
+        for (int i = length - 1; i > n; --i)
+            tab[i] = tab[i - 1];
+        tab[n] = element;
     }
+    return true;
 }
 // --------------------------------------------------------------
+
+template <class T>
+bool aghVector<T>::remove(int n)
+{
+    if (n > length || n < 0)
+        return false;
+    for (int i = n; i < length - 1; ++i)
+        tab[i] = tab[i + 1];
+    this->resize(-1);
+    return true;
+}
+// --------------------------------------------------------------
+
+template <class T>
+int aghVector<T>::size(void) const
+{
+    return length;
+}
+// ---------------------------------------------------------------
+
+template <class T>
+aghVector<T>& aghVector<T>::operator=(aghVector<T> const& right)
+{
+    if (*this == right)
+        return *this;
+    this->dealloc();
+    this->alloc(right.size());
+    for (int i = 0; i < length; ++i)
+        tab[i] = right.at(i);
+    return *this;
+}
 
 #endif

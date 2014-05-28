@@ -25,7 +25,7 @@ public:
     aghContainer();
 
     /// \brief Destruktor wirtualny
-    virtual ~aghContainer() = 0;
+    virtual ~aghContainer();
 
     /// \brief Metoda dodaje element do pojemnika
     ///
@@ -100,7 +100,7 @@ public:
     ///
     /// \param right - referencja do obiektu macierzystego
     /// \return zwraca referencjê do obiektu macierzystego
-    virtual aghContainer<T>& operator=(aghContainer<T> const& right) = 0;
+    aghContainer<T>& operator=(aghContainer<T> const& right);
 
     /// \brief Prze³adowanie operatora porównania "=="
     ///
@@ -159,6 +159,17 @@ public:
 
 // Definicje metod
 // -----------------------------------------------------------------------------
+template <class T>
+aghContainer<T>::aghContainer(void)
+{
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
+aghContainer<T>::~aghContainer(void)
+{
+}
+// -----------------------------------------------------------------------------
 
 template <class T>
 void aghContainer<T>::append(T const& element)
@@ -185,7 +196,7 @@ bool aghContainer<T>::replace(int n, T const& element)
 template <class T>
 void aghContainer<T>::clear()
 {
-    for (int i = 0; i < this->size(); ++i)
+    for (int i = this->size() - 1; i > -1; --i)
         this->remove(i);
 }
 // -----------------------------------------------------------------------------
@@ -203,13 +214,13 @@ bool aghContainer<T>::isEmpty(void)
 template <class T>
 int aghContainer<T>::indexOf(T const& _value, int _from) const
 {
-    if (_from > this->size || _from < 0)
+    if (_from > this->size() || _from < 0)
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
 
     for (int i = _from; i < this->size(); ++i)
     {
-        if this->at(n) == _value;
-        return n;
+        if (this->at(i) == _value)
+            return i;
     }
 
     return -1;
@@ -219,17 +230,29 @@ int aghContainer<T>::indexOf(T const& _value, int _from) const
 template <class T>
 bool aghContainer<T>::contains(T const& _value, int _from) const
 {
-    if (_from > this->size || _from < 0)
+    if (_from > this->size() || _from < 0)
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
 
     for (int i = _from; i < this->size(); ++i)
     {
-        if this->at(n) == _value;
-        return true;
+        if (this->at(i) == _value)
+            return true;
     }
     return false;
 }
 // -----------------------------------------------------------------------------
+
+template <class T>
+aghContainer<T>& aghContainer<T>::operator=(aghContainer<T> const& right)
+{
+    if (*this == right)
+        return *this;
+    this->clear();
+    for (int i = 0; i < right.size(); ++i)
+        this->append(right.at(i));
+    return *this;
+}
+// ------------------------------------------------------------------------------
 
 template <class T>
 bool aghContainer<T>::operator==(aghContainer<T> const& right)
@@ -238,7 +261,7 @@ bool aghContainer<T>::operator==(aghContainer<T> const& right)
         return false;
     for (int i = 0; i < this->size(); ++i)
     {
-        if (this->at(i) != right.at(n)
+        if (this->at(i) != right.at(i))
             return false;
     }
     return true;
@@ -252,7 +275,7 @@ bool aghContainer<T>::operator!=(aghContainer<T> const& right)
         return true;
     for (int i = 0; i < this->size(); ++i)
     {
-        if (this->at(i) != right.at(n)
+        if (this->at(i) != right.at(i))
             return true;
     }
     return false;
@@ -262,7 +285,7 @@ bool aghContainer<T>::operator!=(aghContainer<T> const& right)
 template <class T>
 T& aghContainer<T>::operator[](int n) const
 {
-    if (_from > this->size || _from < 0)
+    if (n > this->size() || n < 0)
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
     return this->at(n);
 }
@@ -273,7 +296,7 @@ aghContainer<T>& aghContainer<T>::operator+=(aghContainer<T> const& right)
 {
     for (int i = 0; i < right.size())
         this->append(right.at(n));
-    return this;
+    return *this;
 }
 // -----------------------------------------------------------------------------
 
@@ -281,7 +304,7 @@ template <class T>
 aghContainer<T>& aghContainer<T>::operator+=(T const& element)
 {
     this->append(element);
-    return this;
+    return *this;
 }
 // -----------------------------------------------------------------------------
 
@@ -289,7 +312,7 @@ template <class T>
 aghContainer<T>& aghContainer<T>::operator<<(T const& element)
 {
     this->append(element);
-    return this;
+    return *this;
 }
 // -----------------------------------------------------------------------------
 
@@ -299,12 +322,12 @@ aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 {
     for (int i = 0; i < right.size())
         this->append(right.at(n));
-    return this;
+    return *this;
 }
 // -----------------------------------------------------------------------------
 
 template <class T>
-friend ostream& operator<<(ostream& output, aghContainer<T> const& right)
+ostream& operator<<(ostream& output, aghContainer<T> const& right)
 {
     for (int i = 0; i < this->size(); ++i)
     {
