@@ -153,7 +153,8 @@ public:
     /// \param output - referencja do strumienia, na który zostanie wypisany pojemnik
     /// \param right - referencja do obiektu, którego elementy zostan¹ wypisane
     /// \return zwraca referencjê do strumienia output
-    friend ostream& operator<<(ostream& output, aghContainer<T> const& right);
+    template <class friendT>
+    friend ostream& operator<<(ostream& output, aghContainer<friendT> const& right);
 };
 // -----------------------------------------------------------------------------
 
@@ -326,8 +327,8 @@ aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 }
 // -----------------------------------------------------------------------------
 
-template <class T>
-ostream& operator<<(ostream& output, aghContainer<T> const& right)
+template <class friendT>
+ostream& operator<<(ostream& output, aghContainer<friendT> const& right)
 {
     for (int i = 0; i < right.size(); ++i)
     {
