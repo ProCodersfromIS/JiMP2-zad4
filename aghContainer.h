@@ -294,8 +294,8 @@ T& aghContainer<T>::operator[](int n) const
 template <class T>
 aghContainer<T>& aghContainer<T>::operator+=(aghContainer<T> const& right)
 {
-    for (int i = 0; i < right.size())
-        this->append(right.at(n));
+    for (int i = 0; i < right.size(); ++i)
+        this->append(right.at(i));
     return *this;
 }
 // -----------------------------------------------------------------------------
@@ -320,8 +320,8 @@ aghContainer<T>& aghContainer<T>::operator<<(T const& element)
 template <class T>
 aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 {
-    for (int i = 0; i < right.size())
-        this->append(right.at(n));
+    for (int i = 0; i < right.size(); ++i)
+        this->append(right.at(i));
     return *this;
 }
 // -----------------------------------------------------------------------------
@@ -329,9 +329,9 @@ aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 template <class T>
 ostream& operator<<(ostream& output, aghContainer<T> const& right)
 {
-    for (int i = 0; i < this->size(); ++i)
+    for (int i = 0; i < right.size(); ++i)
     {
-        output << right.at(n) << "\n";
+        output << right.at(i) << "\n";
     }
     return output;
 }
