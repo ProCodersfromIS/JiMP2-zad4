@@ -167,7 +167,7 @@ aghVector<T>::~aghVector()
 template <class T>
 T& aghVector<T>::at(int n) const
 {
-    if (n > this->size() || n < 0)
+    if (this->invalidIndex(n))
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
     return tab[n];
 }
@@ -183,7 +183,7 @@ int aghVector<T>::size(void) const
 template <class T>
 bool aghVector<T>::insert(int n, T const& element)
 {
-    if (n > length || n < 0)
+    if (this->invalidIndex(n))
         return false;
     this->resize(1);
     if (n != length - 1)
@@ -199,7 +199,7 @@ bool aghVector<T>::insert(int n, T const& element)
 template <class T>
 bool aghVector<T>::remove(int n)
 {
-    if (n > length || n < 0)
+    if (this->invalidIndex(n))
         return false;
     for (int i = n; i < length - 1; ++i)
         tab[i] = tab[i + 1];

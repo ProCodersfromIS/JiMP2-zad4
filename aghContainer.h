@@ -20,6 +20,15 @@
 template <class T>
 class aghContainer
 {
+protected:
+    /// \brief Metoda sprawdza, czy przekazany indeks jest poprawny
+    ///
+    /// \param n - indeks
+    /// \return metoda zwraca:
+    /// \li true - gdy indeks jest w zakresie wektora
+    /// \li false - gdy indeks nie jest w zakresie wektora
+    bool invalidIndex(int n) const;
+
 public:
     /// \brief Konstruktor bezparametrowy
     aghContainer();
@@ -162,6 +171,16 @@ public:
 // -----------------------------------------------------------------------------
 
 template <class T>
+bool aghContainer<T>::invalidIndex(int n) const
+{
+    if (n > this->size() || n < 0)
+        return true;
+    else
+        return false;
+}
+// -----------------------------------------------------------------------------
+
+template <class T>
 aghContainer<T>::aghContainer(void)
 {
 }
@@ -216,7 +235,7 @@ bool aghContainer<T>::isEmpty(void)
 template <class T>
 int aghContainer<T>::indexOf(T const& _value, int _from) const
 {
-    if (_from > this->size() || _from < 0)
+    if (this->invalidIndex(_from))
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
 
     for (int i = _from; i < this->size(); ++i)
@@ -232,7 +251,7 @@ int aghContainer<T>::indexOf(T const& _value, int _from) const
 template <class T>
 bool aghContainer<T>::contains(T const& _value, int _from) const
 {
-    if (_from > this->size() || _from < 0)
+    if (this->invalidIndex(_from))
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
 
     for (int i = _from; i < this->size(); ++i)
@@ -273,21 +292,14 @@ bool aghContainer<T>::operator==(aghContainer<T> const& right)
 template <class T>
 bool aghContainer<T>::operator!=(aghContainer<T> const& right)
 {
-    if (this->size() != right.size())
-        return true;
-    for (int i = 0; i < this->size(); ++i)
-    {
-        if (this->at(i) != right.at(i))
-            return true;
-    }
-    return false;
+    return !(this->operator==(right));
 }
 // -----------------------------------------------------------------------------
 
 template <class T>
 T& aghContainer<T>::operator[](int n) const
 {
-    if (n > this->size() || n < 0)
+    if (this->invalidIndex(n))
         throw aghException(0, "Index out of range", __FILE__, __LINE__);
     return this->at(n);
 }
@@ -313,8 +325,7 @@ aghContainer<T>& aghContainer<T>::operator+=(T const& element)
 template <class T>
 aghContainer<T>& aghContainer<T>::operator<<(T const& element)
 {
-    this->append(element);
-    return *this;
+    return this->operator+=(element);
 }
 // -----------------------------------------------------------------------------
 
@@ -322,9 +333,7 @@ aghContainer<T>& aghContainer<T>::operator<<(T const& element)
 template <class T>
 aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 {
-    for (int i = 0; i < right.size(); ++i)
-        this->append(right.at(i));
-    return *this;
+    return this->operator+=(right);
 }
 // -----------------------------------------------------------------------------
 
