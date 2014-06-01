@@ -35,12 +35,13 @@ private:
     /// \brief Metoda zwalnia zaalokowan¹ pamiêæ
     void dealloc();
 
-    /// \brief Metoda zmienia rozmiar tablicy
+    /// \brief Metoda rozsuwa w danym miejscu elementy lub usuwa element (czyli zsuwa elementy)
     ///
-    /// \param k - zmiana rozmiaru:
-    /// \li -1 - zmniejsza o jeden
-    /// \li 1 - zwiêksza o jeden
-    void resize(int k);
+    /// \param n - indeks elementu
+    /// \param k - usuwa element czy rozsuwa elementy:
+    /// \li -1 - usuwa element
+    /// \li 1 - rozsuwa elementy
+    void editTable(int k, int n);
 
 public:
     /// \brief Konstruktor bezparametrowy
@@ -116,17 +117,26 @@ void aghVector<T>::dealloc()
 // --------------------------------------------------------------
 
 template <class T>
-void aghVector<T>::resize(int k)
+void aghVector<T>::editTable(int k, int n)
 {
     T* localtab = tab;
     this->alloc(length + k);
 
-    int helper = length;
-    if (k == 1)
-        --helper;
-
-    for (int i = 0; i < helper; ++i)
+    for (int i = 0; i < n; ++i)
         tab[i] = localtab[i];
+
+    if (k == 1)
+    {
+        for (int i = length - 1; i > n; --i)
+            tab[i] = localtab[i - 1];
+    }
+
+    else
+    {
+        for (int i = n; i < length; ++i)
+            tab[i] = localtab[i + 1];
+    }
+    
     delete[] localtab;
 }
 // --------------------------------------------------------------
@@ -185,12 +195,7 @@ bool aghVector<T>::insert(int n, T const& element)
 {
     if (this->invalidIndex(n))
         return false;
-    this->resize(1);
-    if (n != length - 1)
-    {
-        for (int i = length - 1; i > n; --i)
-            tab[i] = tab[i - 1];
-    }
+    this->editTable(1, n);
     tab[n] = element;
     return true;
 }
@@ -201,9 +206,7 @@ bool aghVector<T>::remove(int n)
 {
     if (this->invalidIndex(n))
         return false;
-    for (int i = n; i < length - 1; ++i)
-        tab[i] = tab[i + 1];
-    this->resize(-1);
+    this->editTable(-1, n);
     return true;
 }
 // --------------------------------------------------------------
