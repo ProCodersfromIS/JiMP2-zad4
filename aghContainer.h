@@ -162,8 +162,14 @@ public:
     /// \param output - referencja do strumienia, na który zostanie wypisany pojemnik
     /// \param right - referencja do obiektu, którego elementy zostan¹ wypisane
     /// \return zwraca referencjê do strumienia output
-    template <class friendT>
-    friend ostream& operator<<(ostream& output, aghContainer<friendT> const& right);
+    friend ostream& operator<<(ostream& output, aghContainer<T> const& right)
+    {
+        for (int i = 0; i < right.size(); ++i)
+        {
+            output << right.at(i) << "\n";
+        }
+        return output;
+    }
 };
 // -----------------------------------------------------------------------------
 
@@ -173,7 +179,7 @@ public:
 template <class T>
 bool aghContainer<T>::invalidIndex(int n) const
 {
-    if (n > this->size() || n < 0)
+    if (n >= this->size() || n < 0)
         return true;
     else
         return false;
@@ -208,9 +214,7 @@ bool aghContainer<T>::replace(int n, T const& element)
         return true;
     }
     else
-    {
         return false;
-    }
 }
 // -----------------------------------------------------------------------------
 
@@ -251,15 +255,9 @@ int aghContainer<T>::indexOf(T const& _value, int _from) const
 template <class T>
 bool aghContainer<T>::contains(T const& _value, int _from) const
 {
-    if (this->invalidIndex(_from))
-        throw aghException(0, "Index out of range", __FILE__, __LINE__);
-
-    for (int i = _from; i < this->size(); ++i)
-    {
-        if (this->at(i) == _value)
-            return true;
-    }
-    return false;
+    if (this->indexOf(_value) == -1)
+        return false;
+    return true;
 }
 // -----------------------------------------------------------------------------
 
@@ -334,17 +332,6 @@ template <class T>
 aghContainer<T>& aghContainer<T>::operator<<(aghContainer<T> const& right)
 {
     return this->operator+=(right);
-}
-// -----------------------------------------------------------------------------
-
-template <class friendT>
-ostream& operator<<(ostream& output, aghContainer<friendT> const& right)
-{
-    for (int i = 0; i < right.size(); ++i)
-    {
-        output << right.at(i) << "\n";
-    }
-    return output;
 }
 // -----------------------------------------------------------------------------
 

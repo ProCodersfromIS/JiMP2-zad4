@@ -161,9 +161,9 @@ aghVector<T>::aghVector(const aghVector<T>& pattern)
 template <class T>
 aghVector<T>::aghVector(const aghContainer<T>& pattern)
 {
-    this->alloc(((const aghVector<T>&)pattern).size());
+    this->alloc(pattern.size());
     for (int i = 0; i < length; ++i)
-        tab[i] = ((const aghVector<T>&)pattern).at(i);
+        tab[i] = pattern.at(i);
 }
 // --------------------------------------------------------------
 
@@ -193,7 +193,7 @@ int aghVector<T>::size(void) const
 template <class T>
 bool aghVector<T>::insert(int n, T const& element)
 {
-    if (this->invalidIndex(n))
+    if (n > this->size() || n < 0)
         return false;
     this->editTable(1, n);
     tab[n] = element;
@@ -204,7 +204,7 @@ bool aghVector<T>::insert(int n, T const& element)
 template <class T>
 bool aghVector<T>::remove(int n)
 {
-    if (this->invalidIndex(n))
+    if (n > this->size() || n < 0)
         return false;
     this->editTable(-1, n);
     return true;
@@ -214,12 +214,7 @@ bool aghVector<T>::remove(int n)
 template <class T>
 aghVector<T>& aghVector<T>::operator=(aghVector<T> const& right)
 {
-    if (*this == right)
-        return *this;
-    this->dealloc();
-    this->alloc(right.size());
-    for (int i = 0; i < length; ++i)
-        tab[i] = right.at(i);
+    this->aghContainer::operator=(right);
     return *this;
 }
 // --------------------------------------------------------------
