@@ -24,8 +24,8 @@ template <class T>
 class aghVector: public aghContainer<T>
 {
 private:
-    T* tab; ///< wskaŸnik do pocz¹tku tablicy elementów
-    int length; ///< iloœæ elementów w pojemniku
+    T* tab = nullptr; ///< wskaŸnik do pocz¹tku tablicy elementów
+    int length = 0; ///< iloœæ elementów w pojemniku
 
     /// \brief Metoda alokuje tablicy o wyznaczonej iloœci elementów
     ///
@@ -96,7 +96,6 @@ public:
 // --------------------------------------------------------------
 
 // Definicje metod
-
 // --------------------------------------------------------------
 
 template <class T>
@@ -144,26 +143,20 @@ void aghVector<T>::editTable(int k, int n)
 template <class T>
 aghVector<T>::aghVector()
 {
-    length = 0;
-    tab = nullptr;
 }
 // --------------------------------------------------------------
 
 template <class T>
 aghVector<T>::aghVector(const aghVector<T>& pattern)
 {
-    this->alloc(pattern.size());
-    for (int i = 0; i < length; ++i)
-        tab[i] = pattern.at(i);
+    this->operator=(pattern);
 }
 // --------------------------------------------------------------
 
 template <class T>
 aghVector<T>::aghVector(const aghContainer<T>& pattern)
 {
-    this->alloc(pattern.size());
-    for (int i = 0; i < length; ++i)
-        tab[i] = pattern.at(i);
+    this->aghContainer<T>::operator=(pattern);
 }
 // --------------------------------------------------------------
 
@@ -204,7 +197,7 @@ bool aghVector<T>::insert(int n, T const& element)
 template <class T>
 bool aghVector<T>::remove(int n)
 {
-    if (n > this->size() || n < 0)
+    if (this->invalidIndex(n))
         return false;
     this->editTable(-1, n);
     return true;
@@ -214,7 +207,7 @@ bool aghVector<T>::remove(int n)
 template <class T>
 aghVector<T>& aghVector<T>::operator=(aghVector<T> const& right)
 {
-    this->aghContainer::operator=(right);
+    this->aghContainer<T>::operator=(right);
     return *this;
 }
 // --------------------------------------------------------------
